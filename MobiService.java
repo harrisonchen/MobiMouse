@@ -37,6 +37,9 @@ public class MobiService {
 		try {
 			ServerSocket serverSocket = new ServerSocket(portNumber);
 			Socket clientSocket = serverSocket.accept();
+
+			System.out.println("Client connected");
+
 			outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 			inputStream = new ObjectInputStream(clientSocket.getInputStream());
 
