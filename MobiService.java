@@ -57,20 +57,20 @@ public class MobiService {
 
 					if(input.equals("l")) {
 						if(x_coordinate != 0)
-							x_coordinate -= 100;
+							x_coordinate -= 10;
 						robot.mouseMove(x_coordinate, y_coordinate);
 					}
 					else if(input.equals("r")) {
-						x_coordinate += 100;
+						x_coordinate += 10;
 						robot.mouseMove(x_coordinate, y_coordinate);
 					}
 					else if(input.equals("u")) {
 						if(y_coordinate != 0)
-							y_coordinate -= 100;
+							y_coordinate -= 10;
 						robot.mouseMove(x_coordinate, y_coordinate);
 					}
 					else if(input.equals("d")) {
-						y_coordinate += 100;
+						y_coordinate += 10;
 						robot.mouseMove(x_coordinate, y_coordinate);
 					}
 					else if(input.equals("R_CLICK_PRESS")) {
