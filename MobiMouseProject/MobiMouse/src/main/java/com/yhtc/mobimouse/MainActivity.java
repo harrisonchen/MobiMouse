@@ -87,7 +87,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void disconnectClient(View view) {
-        clientSetup.exit();
+        clientSetup.exitClient();
+        finish();
     }
 
     public class ClientSetup extends AsyncTask<Void, Void, Void>
@@ -169,10 +170,12 @@ public class MainActivity extends ActionBarActivity {
             }
         }
 
-        public void exit() {
+        public void exitClient() {
 
             try{
+                dataOutputStream.writeUTF("QUIT");
                 socket.close();
+                finish();
             }
             catch(IOException e){
                 e.printStackTrace();

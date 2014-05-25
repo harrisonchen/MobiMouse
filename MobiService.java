@@ -8,6 +8,8 @@ public class MobiService {
 	static int x_coordinate;
 	static int y_coordinate;
 
+	static boolean server_flag;
+
 	static Robot robot;
 
 	static String input, output;
@@ -29,6 +31,8 @@ public class MobiService {
 		x_coordinate = 100;
 		y_coordinate = 100;
 
+		server_flag = true;
+
 		input = "";
 		output = "";
 
@@ -38,63 +42,65 @@ public class MobiService {
 
 		try {
 			ServerSocket serverSocket = new ServerSocket(portNumber);
-			Socket clientSocket = serverSocket.accept();
+			while(server_flag) {
+				Socket clientSocket = serverSocket.accept();
 
-			System.out.println("Client connected");
+				System.out.println("Client connected");
 
-			dataInputStream = new DataInputStream(clientSocket.getInputStream());
-			dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
+				dataInputStream = new DataInputStream(clientSocket.getInputStream());
+				dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
 
-			while(!input.equals("quit")) {
+				while(!input.equals("quit")) {
+					
+					input = dataInputStream.readUTF();
+					System.out.format("%s\n", input);
+
+					if(input.equals("l")) {
+						if(x_coordinate != 0)
+							x_coordinate -= 100;
+						robot.mouseMove(x_coordinate, y_coordinate);
+					}
+					else if(input.equals("r")) {
+						x_coordinate += 100;
+						robot.mouseMove(x_coordinate, y_coordinate);
+					}
+					else if(input.equals("u")) {
+						if(y_coordinate != 0)
+							y_coordinate -= 100;
+						robot.mouseMove(x_coordinate, y_coordinate);
+					}
+					else if(input.equals("d")) {
+						y_coordinate += 100;
+						robot.mouseMove(x_coordinate, y_coordinate);
+					}
+					else if(input.equals("R_CLICK_PRESS")) {
+						robot.mousePress(InputEvent.BUTTON3_MASK);
+					}
+					else if(input.equals("R_CLICK_RELEASE")) {
+						robot.mouseRelease(InputEvent.BUTTON3_MASK);
+					}
+					else if(input.equals("L_CLICK_PRESS")) {
+						robot.mousePress(InputEvent.BUTTON1_MASK);
+					}
+					else if(input.equals("L_CLICK_RELEASE")) {
+						robot.mouseRelease(InputEvent.BUTTON1_MASK);
+					}
+					else if(input.equals("QUIT")) {
+						break;
+					}
+
+					
+
+					dataOutputStream.writeUTF("SUCCESS");
+				}
+
+				dataOutputStream.writeUTF("QUIT");
 				
-				input = dataInputStream.readUTF();
-				System.out.format("%s\n", input);
-
-				if(input.equals("l")) {
-					if(x_coordinate != 0)
-						x_coordinate -= 100;
-					robot.mouseMove(x_coordinate, y_coordinate);
-				}
-				else if(input.equals("r")) {
-					x_coordinate += 100;
-					robot.mouseMove(x_coordinate, y_coordinate);
-				}
-				else if(input.equals("u")) {
-					if(y_coordinate != 0)
-						y_coordinate -= 100;
-					robot.mouseMove(x_coordinate, y_coordinate);
-				}
-				else if(input.equals("d")) {
-					y_coordinate += 100;
-					robot.mouseMove(x_coordinate, y_coordinate);
-				}
-				else if(input.equals("R_CLICK_PRESS")) {
-					robot.mousePress(InputEvent.BUTTON3_MASK);
-				}
-				else if(input.equals("R_CLICK_RELEASE")) {
-					robot.mouseRelease(InputEvent.BUTTON3_MASK);
-				}
-				else if(input.equals("L_CLICK_PRESS")) {
-					robot.mousePress(InputEvent.BUTTON1_MASK);
-				}
-				else if(input.equals("L_CLICK_RELEASE")) {
-					robot.mouseRelease(InputEvent.BUTTON1_MASK);
-				}
-				else if(input.equals("quit")) {
-					break;
-				}
-
-				
-
-				dataOutputStream.writeUTF("SUCCESS");
-			}
-
-			dataOutputStream.writeUTF("QUIT");
-			
-            dataInputStream.close();
-            dataOutputStream.close();
+	            dataInputStream.close();
+	            dataOutputStream.close();
+	            clientSocket.close();
+	        }
             serverSocket.close();
-            clientSocket.close();
 		}
 		catch (IOException e) {
             System.out.println("Exception caught when trying to listen on port "
