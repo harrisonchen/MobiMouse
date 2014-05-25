@@ -14,8 +14,10 @@ import android.os.Build;
 import android.widget.Button;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -60,25 +62,25 @@ public class MainActivity extends ActionBarActivity {
 
         Socket socket;
 
-        ByteArrayOutputStream outputStream;
-
-        byte[] buffer = new byte[1024];
+        DataOutputStream dataOutputStream;
 
         ClientSetup(String hostname, int portNumber){
             this.hostname = hostname;
             this.portNumber = portNumber;
-            outputStream = new ByteArrayOutputStream(1024);
         }
 
         @Override
         protected Void doInBackground(Void... params)
         {
+
+
             try {
                 socket = new Socket(hostname, portNumber);
-                buffer[0] = 'u';
-                buffer[1] = '\0';
-                outputStream.write(buffer, 0, 2);
-                for(int i = 0; i < 1000000000; ++i);
+                dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                dataOutputStream.writeUTF("u");
+
+                for(int i = 0; i < 10000000; ++i);
+
                 socket.close();
             }
             catch (UnknownHostException e) {

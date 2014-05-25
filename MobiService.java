@@ -11,8 +11,9 @@ public class MobiService {
 
 	static String input, output;
 	static int portNumber;
-	static ObjectInputStream inputStream;
-	static ObjectOutputStream outputStream;
+
+	static DataInputStream dataInputStream;
+	static DataOutputStream dataOutputStream;
 
 	public static void main(String[] args) 
 		throws IOException, ClassNotFoundException, java.awt.AWTException {
@@ -40,13 +41,12 @@ public class MobiService {
 
 			System.out.println("Client connected");
 
-			outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
-			inputStream = new ObjectInputStream(clientSocket.getInputStream());
+			dataInputStream = new DataInputStream(clientSocket.getInputStream());
+			dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
 
 			while(!input.equals("quit")) {
 				
-
-				input = (String) inputStream.readObject();
+				input = dataInputStream.readUTF();
 				System.out.format("%s\n", input);
 
 				if(input.equals("l")) {
@@ -69,13 +69,13 @@ public class MobiService {
 
 				robot.mouseMove(x_coordinate, y_coordinate);
 
-				outputStream.writeObject("SUCCESS");
+				dataOutputStream.writeUTF("SUCCESS");
 			}
 
-			outputStream.writeObject("QUIT");
+			dataOutputStream.writeUTF("QUIT");
 			
-            inputStream.close();
-            outputStream.close();
+            dataInputStream.close();
+            dataOutputStream.close();
             serverSocket.close();
             clientSocket.close();
 		}
@@ -89,7 +89,8 @@ public class MobiService {
 	public static void communicate() throws ClassNotFoundException {
 		
 		try {
-			input = (String) inputStream.readObject();
+			//input = (String) inputStream.readObject();
+			input = dataInputStream.readUTF();
 			System.out.format("%s\n", input);
 		}
 		catch(IOException e) {
