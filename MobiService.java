@@ -1,6 +1,7 @@
 import java.net.*;
 import java.io.*;
 import java.awt.Robot;
+import java.awt.event.InputEvent;
 
 public class MobiService {
 
@@ -52,22 +53,38 @@ public class MobiService {
 				if(input.equals("l")) {
 					if(x_coordinate != 0)
 						x_coordinate -= 100;
+					robot.mouseMove(x_coordinate, y_coordinate);
 				}
 				else if(input.equals("r")) {
 					x_coordinate += 100;
+					robot.mouseMove(x_coordinate, y_coordinate);
 				}
 				else if(input.equals("u")) {
 					if(y_coordinate != 0)
 						y_coordinate -= 100;
+					robot.mouseMove(x_coordinate, y_coordinate);
 				}
 				else if(input.equals("d")) {
-						y_coordinate += 100;
+					y_coordinate += 100;
+					robot.mouseMove(x_coordinate, y_coordinate);
+				}
+				else if(input.equals("R_CLICK_PRESS")) {
+					robot.mousePress(InputEvent.BUTTON3_MASK);
+				}
+				else if(input.equals("R_CLICK_RELEASE")) {
+					robot.mouseRelease(InputEvent.BUTTON3_MASK);
+				}
+				else if(input.equals("L_CLICK_PRESS")) {
+					robot.mousePress(InputEvent.BUTTON1_MASK);
+				}
+				else if(input.equals("L_CLICK_RELEASE")) {
+					robot.mouseRelease(InputEvent.BUTTON1_MASK);
 				}
 				else if(input.equals("quit")) {
 					break;
 				}
 
-				robot.mouseMove(x_coordinate, y_coordinate);
+				
 
 				dataOutputStream.writeUTF("SUCCESS");
 			}

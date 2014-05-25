@@ -5,5 +5,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="connect_btn">Connect</string>
+    <string name="left_click_btn">L</string>
+    <string name="right_click_btn">R</string>
+    <string name="disconnect_btn">Disconnect</string>
 
 </resources>

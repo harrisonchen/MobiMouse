@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
@@ -24,21 +25,52 @@ import java.net.UnknownHostException;
 
 public class MainActivity extends ActionBarActivity {
 
-    Button connect_btn;
+    Button connect_btn, left_click_btn, right_click_btn;
 
+    ClientSetup clientSetup;
 
+    String hostname, input, output;
+    int portNumber;
+
+    Socket socket;
+
+    DataOutputStream dataOutputStream;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
-
-
         connect_btn = (Button) findViewById(R.id.connect_btn);
+        left_click_btn = (Button) findViewById(R.id.left_click_btn);
+        right_click_btn = (Button) findViewById(R.id.right_click_btn);
+
+        left_click_btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    clientSetup.leftClickPressed();
+                }
+                else if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    clientSetup.leftClickReleased();
+                }
+                return false;
+            }
+        });
+
+        right_click_btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    clientSetup.rightClickPressed();
+                }
+                else if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    clientSetup.rightClickReleased();
+                }
+                return false;
+            }
+        });
+
 
 
         /*if (savedInstanceState == null) {
@@ -50,23 +82,20 @@ public class MainActivity extends ActionBarActivity {
 
     public void connectServer(View view) {
 
-        ClientSetup clientSetup = new ClientSetup("192.168.41.190", 11111);
+        clientSetup = new ClientSetup("192.168.41.190", 11111);
         clientSetup.execute();
+    }
+
+    public void disconnectClient(View view) {
+        clientSetup.exit();
     }
 
     public class ClientSetup extends AsyncTask<Void, Void, Void>
     {
 
-        String hostname, input, output;
-        int portNumber;
-
-        Socket socket;
-
-        DataOutputStream dataOutputStream;
-
-        ClientSetup(String hostname, int portNumber){
-            this.hostname = hostname;
-            this.portNumber = portNumber;
+        ClientSetup(String hostname2, int portNumber2){
+            hostname = hostname2;
+            portNumber = portNumber2;
         }
 
         @Override
@@ -77,14 +106,11 @@ public class MainActivity extends ActionBarActivity {
             try {
                 socket = new Socket(hostname, portNumber);
                 dataOutputStream = new DataOutputStream(socket.getOutputStream());
-                dataOutputStream.writeUTF("u");
-
-                for(int i = 0; i < 10000000; ++i);
-
-                socket.close();
+                //dataOutputStream.writeUTF("u");
             }
             catch (UnknownHostException e) {
                 e.printStackTrace();
+                finish();
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -98,7 +124,64 @@ public class MainActivity extends ActionBarActivity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
         }
+
+        public void leftClickPressed() {
+
+            try{
+                dataOutputStream.writeUTF("L_CLICK_PRESS");
+            }
+            catch(IOException e) {
+                e.printStackTrace();
+                finish();
+            }
+        }
+
+        public void rightClickPressed() {
+
+            try{
+                dataOutputStream.writeUTF("R_CLICK_PRESS");
+            }
+            catch(IOException e) {
+                e.printStackTrace();
+                finish();
+            }
+        }
+
+        public void leftClickReleased() {
+
+            try{
+                dataOutputStream.writeUTF("L_CLICK_RELEASE");
+            }
+            catch(IOException e) {
+                e.printStackTrace();
+                finish();
+            }
+        }
+
+        public void rightClickReleased() {
+
+            try{
+                dataOutputStream.writeUTF("R_CLICK_RELEASE");
+            }
+            catch(IOException e) {
+                e.printStackTrace();
+                finish();
+            }
+        }
+
+        public void exit() {
+
+            try{
+                socket.close();
+            }
+            catch(IOException e){
+                e.printStackTrace();
+                finish();
+            }
+        }
     }
+
+
 
 
     @Override
